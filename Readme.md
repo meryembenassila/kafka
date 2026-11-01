@@ -8,3 +8,7 @@ tester avec kafka console consumer et producer
 
 il utilse technique de pulling
 ![img_5.png](img_5.png)
+
+crer un restcontroller :
+![img_6.png](img_6.png)
+![img_7.png](img_7.png)
