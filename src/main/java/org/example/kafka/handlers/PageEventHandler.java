@@ -4,8 +4,11 @@ import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.KeyValue;
 import org.apache.kafka.streams.kstream.Grouped;
 import org.apache.kafka.streams.kstream.KStream;
+import org.apache.kafka.streams.kstream.Materialized;
 import org.apache.kafka.streams.kstream.TimeWindows;
 import org.example.kafka.events.PageEvent;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.stream.binder.kafka.streams.InteractiveQueryService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
@@ -18,6 +21,10 @@ import java.util.function.Supplier;
 
 @Component
 public class PageEventHandler {
+
+    @Autowired
+    private InteractiveQueryService interactiveQueryService;
+
 
     @Bean
     public Consumer<PageEvent> pageEventConsumer() {//le consumer doit faire un subsribe vers un topic(voir application.propreties)
@@ -59,7 +66,7 @@ public class PageEventHandler {
                         )
                         .windowedBy(TimeWindows.ofSizeWithNoGrace(Duration.ofSeconds(5)))
                         // 4. Compter les événements pour chaque page
-                        .count()
+                        .count(Materialized.as("count-store"))
                         // 5. Convertir la KTable en KStream
                         .toStream()
                          //Après le fenêtrage, la clé n'est plus un simple String, mais un Windowed<String>.
